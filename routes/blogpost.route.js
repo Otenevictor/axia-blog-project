@@ -7,7 +7,7 @@ const upload = require("../utils/multer");
 const router = express.Router();
 
 router.post(
-    "/",
+    "/post",
     authentication,
     upload.fields([
         { name: "coverImage", maxCount: 1 },
@@ -16,11 +16,11 @@ router.post(
     createBlog
 );
 
-router.get("/", getAllBlogs);
-router.put("/:id", authentication, upload.fields([
+router.get("/post/allpost", getAllBlogs);
+router.put("post/:id", authentication, upload.fields([
     { name: "coverImage", maxCount: 1 },
     { name: "postImage", maxCount: 1 }
 ]), updateBlog);
-router.delete("/:id", authentication, deleteBlog);
+router.delete("/post/:id", authentication, deleteBlog);
 
 module.exports = router;

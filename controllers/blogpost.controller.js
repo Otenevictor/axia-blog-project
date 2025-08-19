@@ -29,7 +29,7 @@ const createBlog = async (req, res) => {
         // 🔥 Link blog to user
         await User.findByIdAndUpdate(
             req.user.id,
-            { $push: { blogs: savedBlog._id } },
+            { $push: { posts: savedBlog._id } },
             { new: true }
         );
 
@@ -43,8 +43,8 @@ const createBlog = async (req, res) => {
 
 const getAllBlogs = async (req, res) => {
     try {
-        const blogs = await BlogPost.find().populate("author", "firstName lastName email");
-        return res.status(200).json(blogs);
+        const posts = await BlogPost.find().populate("author", "firstName lastName email");
+        return res.status(200).json(posts);
     } catch (error) {
         return res.status(500).json({ message: "Failed to fetch blogs" });
     }

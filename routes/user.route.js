@@ -8,12 +8,12 @@ const upload = require('../utils/multer.js');
 
 
 // Define routes for User operations
-route.post('/register', createUser);
-route.post('/login', loginUser);
+route.post('/user/register', createUser);
+route.post('/user/login', loginUser);
 // Protected routes
-route.get('/all', authentication, adminAuth, getAllUsers);
-route.put('/update', authentication, updateUser);
-route.delete('/delete', authentication, deleteUser);
+route.get('/user/allusers', authentication, adminAuth, getAllUsers);
+route.put('/user/update', authentication, updateUser);
+route.delete('/user/delete', authentication, deleteUser);
 
 
 module.exports = route;

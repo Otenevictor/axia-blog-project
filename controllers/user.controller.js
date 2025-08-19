@@ -37,7 +37,7 @@ const createUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const allUsers = await userModel.find().populate("blogs", "title summary coverImage createdAt");
+        const allUsers = await userModel.find().populate("posts", "title summary coverImage createdAt");
         if (!allUsers || allUsers.length === 0) {
             return res.status(404).json({ message: 'No users found.' });
         }

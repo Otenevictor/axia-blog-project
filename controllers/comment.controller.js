@@ -18,8 +18,7 @@ const addComment = async (req, res) => {
 
 const getComments = async (req, res) => {
     try {
-        const comments = await Comment.find({ post: req.params.postId })
-            .populate("author", "firstName lastName");
+        const comments = await Comment.find({ post: req.params.postId }).populate("author", "firstName lastName");
         return res.status(200).json(comments);
     } catch (error) {
         return res.status(500).json({ message: "Failed to fetch comments" });

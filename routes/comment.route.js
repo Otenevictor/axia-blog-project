@@ -5,8 +5,8 @@ const { addComment, getComments, deleteComment } = require("../controllers/comme
 
 const router = express.Router();
 
-router.post("/:postId", authentication, addComment);
-router.get("/:postId", getComments);
-router.delete("/:id", authentication, deleteComment);
+router.post("/comment/:postId", authentication, addComment);
+router.get("/comment/:postId", getComments);
+router.delete("/comment/:id", authentication, deleteComment);
 
 module.exports = router;
