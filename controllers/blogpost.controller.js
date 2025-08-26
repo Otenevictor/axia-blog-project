@@ -71,7 +71,7 @@ const updateBlog = async (req, res) => {
 
         // Only author or admin can update
         if (blog.author.toString() !== req.user.id && !req.user.isAdmin) {
-            return res.status(403).json({ message: "Permission denied" });
+            return res.status(403).json({ message: "Permission denied you are note the author" });
         }
 
         // Handle new uploads if provided
