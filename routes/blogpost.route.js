@@ -17,7 +17,7 @@ router.post(
 );
 
 router.get("/post/allpost", getAllBlogs);
-router.put("post/:id", authentication, upload.fields([
+router.put("/posts/:id", authentication, upload.fields([
     { name: "coverImage", maxCount: 1 },
     { name: "postImage", maxCount: 1 }
 ]), updateBlog);
