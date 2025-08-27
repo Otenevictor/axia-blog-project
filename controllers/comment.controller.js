@@ -79,7 +79,7 @@ const deleteComment = async (req, res) => {
         if (!comment) return res.status(404).json({ message: "Comment not found" });
 
         if (comment.author.toString() !== req.user.id && !req.user.isAdmin) {
-            return res.status(403).json({ message: "Permission denied" });
+            return res.status(403).json({ message: "Permission denied you are not the author" });
         }
 
         await comment.deleteOne();
