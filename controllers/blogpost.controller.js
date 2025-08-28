@@ -49,94 +49,94 @@ const createBlog = async (req, res) => {
 
 
 const getAllBlogs = async (req, res) => {
-  try {
-    // Check if admin
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ message: "Permission denied. Admins only." });
+    try {
+        // Check if admin
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: "Permission denied. Admins only." });
+        }
+
+        const posts = await BlogPost.find()
+            .populate("author", "firstName lastName email")
+            .populate({
+                path: "comments",
+                populate: { path: "author", select: "firstName lastName" }
+            });
+
+        return res.status(200).json(posts);
+    } catch (error) {
+        console.error("Get all blogs error:", error);
+        return res.status(500).json({ message: "Failed to fetch blogs" });
     }
-
-    const posts = await BlogPost.find()
-      .populate("author", "firstName lastName email")
-      .populate({
-        path: "comments",
-        populate: { path: "author", select: "firstName lastName" }
-      });
-
-    return res.status(200).json(posts);
-  } catch (error) {
-    console.error("Get all blogs error:", error);
-    return res.status(500).json({ message: "Failed to fetch blogs" });
-  }
 };
 
 const getMyBlogs = async (req, res) => {
-  try {
-    const posts = await BlogPost.find({ author: req.user.id })
-      .populate("author", "firstName lastName email")
-      .populate({
-        path: "comments",
-        populate: { path: "author", select: "firstName lastName" }
-      });
+    try {
+        const posts = await BlogPost.find({ author: req.user.id })
+            .populate("author", "firstName lastName email")
+            .populate({
+                path: "comments",
+                populate: { path: "author", select: "firstName lastName" }
+            });
 
-    if (!posts || posts.length === 0) {
-      return res.status(404).json({ message: "You have no posts yet" });
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: "You have no posts yet" });
+        }
+
+        return res.status(200).json(posts);
+    } catch (error) {
+        console.error("Get my blogs error:", error);
+        return res.status(500).json({ message: "Failed to fetch your blogs" });
     }
-
-    return res.status(200).json(posts);
-  } catch (error) {
-    console.error("Get my blogs error:", error);
-    return res.status(500).json({ message: "Failed to fetch your blogs" });
-  }
 };
 
 const getMyBlogById = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const post = await BlogPost.findById(id)
-      .populate("author", "firstName lastName email")
-      .populate({
-        path: "comments",
-        populate: { path: "author", select: "firstName lastName" }
-      });
+        const post = await BlogPost.findById(id)
+            .populate("author", "firstName lastName email")
+            .populate({
+                path: "comments",
+                populate: { path: "author", select: "firstName lastName" }
+            });
 
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Ensure the requester is the owner or an admin
+        if (post.author._id.toString() !== req.user.id && !req.user.isAdmin) {
+            return res.status(403).json({ message: "Permission denied" });
+        }
+
+        return res.status(200).json(post);
+    } catch (error) {
+        console.error("Get blog by id error:", error);
+        return res.status(500).json({ message: "Failed to fetch the post" });
     }
-
-    // Ensure the requester is the owner or an admin
-    if (post.author._id.toString() !== req.user.id && !req.user.isAdmin) {
-      return res.status(403).json({ message: "Permission denied" });
-    }
-
-    return res.status(200).json(post);
-  } catch (error) {
-    console.error("Get blog by id error:", error);
-    return res.status(500).json({ message: "Failed to fetch the post" });
-  }
 };
 
 
 // Get all published posts
 const getPublishedPosts = async (req, res) => {
-  try {
-    const posts = await BlogPost.find({ isPublished: true })
-      .populate("author", "firstName lastName email") // populate author basic info
-      .sort({ createdAt: -1 }); // newest first
+    try {
+        const posts = await BlogPost.find({ isPublished: true })
+            .populate("author", "firstName lastName email") // populate author basic info
+            .sort({ createdAt: -1 }); // newest first
 
-    if (!posts || posts.length === 0) {
-      return res.status(404).json({ message: "No published posts found" });
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: "No published posts found" });
+        }
+
+        return res.status(200).json({
+            message: "Published posts fetched successfully",
+            count: posts.length,
+            posts,
+        });
+    } catch (error) {
+        console.error("Error fetching published posts:", error);
+        return res.status(500).json({ message: "Failed to fetch published posts" });
     }
-
-    return res.status(200).json({
-      message: "Published posts fetched successfully",
-      count: posts.length,
-      posts,
-    });
-  } catch (error) {
-    console.error("Error fetching published posts:", error);
-    return res.status(500).json({ message: "Failed to fetch published posts" });
-  }
 };
 
 
@@ -194,4 +194,4 @@ const deleteBlog = async (req, res) => {
 };
 
 
-module.exports = { createBlog,getMyBlogs, getAllBlogs,getMyBlogById, updateBlog, deleteBlog , getPublishedPosts};
+module.exports = { createBlog, getMyBlogs, getAllBlogs, getMyBlogById, updateBlog, deleteBlog, getPublishedPosts };
