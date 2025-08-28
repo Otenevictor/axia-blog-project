@@ -56,8 +56,8 @@ const updateComment = async (req, res) => {
         }
 
         // Check ownership
-        if (comment.author.toString() !== req.user.id && !req.user.isAdmin) {
-            return res.status(403).json({ message: "Permission denied" });
+        if (comment.author.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Permission denied not the owner" });
         }
 
         // Update

@@ -103,9 +103,9 @@ const deleteBlog = async (req, res) => {
         const blog = await BlogPost.findById(req.params.id);
         if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-        // ✅ Only the author can delete
-        if (blog.author.toString() !== req.user.id) {
-            return res.status(403).json({ message: "Permission denied, you are not the author" });
+        // ✅ Author or Admin can delete
+        if (blog.author.toString() !== req.user.id && !req.user.isAdmin) {
+            return res.status(403).json({ message: "Permission denied, only author or admin can delete" });
         }
 
         await blog.deleteOne();
