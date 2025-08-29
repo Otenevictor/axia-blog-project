@@ -70,16 +70,36 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-    const id = req.user.id; // Get user id from authentication middleware
-
     try {
-        const deletedUser = await userModel.findByIdAndDelete(id);
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found.' });
+        const loggedInUserId = req.user.id;   // ID from token
+        const targetUserId = req.params.id;   // ID of user to delete
+
+        let userIdToDelete;
+
+        if (req.user.isAdmin) {
+            // Admin can delete any user
+            userIdToDelete = targetUserId;
+        } else {
+            // Normal user can only delete their own account
+            if (targetUserId !== loggedInUserId) {
+                return res.status(403).json({ message: "You can only delete your own account." });
+            }
+            userIdToDelete = loggedInUserId;
         }
-        return res.status(200).json({ message: 'User deleted successfully.', deletedUser });
+
+        const deletedUser = await userModel.findByIdAndDelete(userIdToDelete);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        return res.status(200).json({
+            message: "User deleted successfully.",
+            deletedUser,
+        });
     } catch (error) {
-        return res.status(500).json({ message: 'Something went wrong while deleting the user.' });
+        console.error("Delete user error:", error);
+        return res.status(500).json({ message: "Something went wrong while deleting the user." });
     }
 };
 
