@@ -43,6 +43,13 @@ const createBlog = async (req, res) => {
         return res.status(201).json(savedBlog);
     } catch (error) {
         console.error("Error creating blog:", error.message);
+          // ✅ cleanup if error
+        if (coverPath) {
+            await fs.unlink(coverPath).catch(err => console.error("Failed to unlink cover file:", err.message));
+        }
+        if (postPath) {
+            await fs.unlink(postPath).catch(err => console.error("Failed to unlink post file:", err.message));
+        }
         return res.status(500).json({ message: "Failed to create blog" });
     }
 };
@@ -170,6 +177,13 @@ const updateBlog = async (req, res) => {
         return res.status(200).json(updated);
     } catch (error) {
         console.error("Update blog error:", error);
+          // ✅ cleanup if error
+        if (coverPath) {
+            await fs.unlink(coverPath).catch(err => console.error("Failed to unlink cover file:", err.message));
+        }
+        if (postPath) {
+            await fs.unlink(postPath).catch(err => console.error("Failed to unlink post file:", err.message));
+        }
         return res.status(500).json({ message: "Failed to update blog" });
     }
 };
